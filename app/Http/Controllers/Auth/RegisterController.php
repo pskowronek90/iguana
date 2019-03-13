@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\User;
+use App\Http\Models\User;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 
 class RegisterController extends Controller
@@ -48,11 +46,30 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {
-        return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+        return validator()->make($data, $this->rules(), $this->messages());
+    }
+
+    protected function rules(): array
+    {
+        return $rules = [
+            'email' => ['required', 'string', 'email', 'max:50', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-        ]);
+        ];
+    }
+
+    protected function messages(): array
+    {
+        return $messages = [
+            'email.required' => trans('Podaj adres e-mail'),
+            'email.string' => trans('Zły format adresu e-mail'),
+            'email.email' => trans('Zły format adresu e-mail'),
+            'email.max' => trans('Adres e-mail może zawierać maksymalnie 50 znaków'),
+            'email.unique' => trans('Użytkownik o takim adresie e-amil już istnieje'),
+            'password.required' => trans('Hasło wymagane'),
+            'password.string' => trans('Zły format hasła'),
+            'password.min' => trans('Hasło musi zawierać co najmniej 8 znaków'),
+            'password.confirmed' => trans('Hasła muszą być jednakowe'),
+        ];
     }
 
     /**
@@ -64,9 +81,8 @@ class RegisterController extends Controller
     protected function create(array $data)
     {
         return User::create([
-            'name' => $data['name'],
             'email' => $data['email'],
-            'password' => Hash::make($data['password']),
+            'password' => bcrypt($data['password']),
         ]);
     }
 }

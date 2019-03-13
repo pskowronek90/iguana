@@ -13,10 +13,10 @@ return [
     |
     */
 
-    'password' => 'Passwords must be at least eight characters and match the confirmation.',
-    'reset' => 'Your password has been reset!',
-    'sent' => 'We have e-mailed your password reset link!',
-    'token' => 'This password reset token is invalid.',
-    'user' => "We can't find a user with that e-mail address.",
+    'password' => trans('Hasła muszą być jednakowe i zawierać co najmniej 8 znaków'),
+    'reset' => trans('Hasło zresetowane pomyślnie!'),
+    'sent' => trans('Na twój adres e-amil zostałwysłąny link dzięki któremu zresetujesz hasło'),
+    'token' => trans('Token nieprawidłowy'),
+    'user' => trans('Nie znaleziono użytkownika o takim adresie e-amil'),
 
 ];
