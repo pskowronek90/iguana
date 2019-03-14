@@ -21,4 +21,9 @@ class CommentRepository
             ]
         );
     }
+
+    public function deleteCommentsByArticleId(int $articleId)
+    {
+        return $this->comment->where('article_id', $articleId)->delete();
+    }
 }

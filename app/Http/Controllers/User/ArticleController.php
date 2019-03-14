@@ -3,17 +3,20 @@
 use App\Http\Controllers\Controller;
 use App\Http\Models\Article;
 use App\Repositories\ArticleRepository;
+use App\Repositories\CommentRepository;
 
 class ArticleController extends Controller
 {
     protected $article;
     protected $articleRepository;
+    protected $commentRepository;
 
-    public function __construct(Article $article, ArticleRepository $articleRepository)
+    public function __construct(Article $article, ArticleRepository $articleRepository, CommentRepository $commentRepository)
     {
         $this->middleware('auth');
         $this->article = $article;
         $this->articleRepository = $articleRepository;
+        $this->commentRepository = $commentRepository;
 
     }
 
@@ -78,14 +81,14 @@ class ArticleController extends Controller
 
     public function destroy($id)
     {
-        !is_null($this->articleRepository->getArticleById($id))
-            ? $this->articleRepository->deleteArticle($id)
-            : die('Nie ma takiego artykułu');
-
-        if ($this->articleRepository->isUserOwner($id) === true) {
+        if (is_null($this->articleRepository->getArticleById($id))) {
+            die('Nie ma takiego artykułu');
+        } elseif ($this->articleRepository->isUserOwner($id) === false) {
             die('Nie jesteś właścicielem tego artykułu');
         }
 
+        $this->articleRepository->deleteArticle($id);
+        $this->commentRepository->deleteCommentsByArticleId($id);
 
         return redirect()->route('home');
     }
