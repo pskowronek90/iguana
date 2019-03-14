@@ -17,6 +17,11 @@ class ArticleRepository
         return $this->article->all();
     }
 
+    public function getArticleById(int $articleId): Article
+    {
+        return $this->article->find($articleId);
+    }
+
     public function createNewArticle(string $img): Article
     {
         return $this->article->create(
@@ -27,6 +32,19 @@ class ArticleRepository
                 'img' => $img,
             ]
         );
+    }
+
+    public function updateArticle(int $articleId, string $img)
+    {
+        return $this->article
+            ->where('id', $articleId)
+            ->update(
+                [
+                    'title' => request('title'),
+                    'content' => request('content'),
+                    'img' => $img,
+                ]
+            );
     }
 
     public function deleteArticle($id)

@@ -37,33 +37,74 @@ class ArticleController extends Controller
         return redirect()->route('home');
     }
 
-    public function edit()
+    public function edit($id)
     {
-        //
-    }
+        $article = $this->articleRepository->getArticleById($id) ?: die('Nie ma takiego artykułu');
 
-    public function update()
-    {
-
-    }
-
-    public function destroy($id)
-    {
         if ($this->articleRepository->isUserOwner($id) === false) {
             die('Nie jesteś właścicielem tego artykułu');
         }
 
-        $this->articleRepository->deleteArticle($id);
+        return view('articles.edit')->with(compact('article'));
+    }
+
+    public function update()
+    {
+        $article = $this->articleRepository->getArticleById(request('id')) ?: null;
+
+
+        if (is_null($article)) {
+            die('Nie ma takiego artykułu');
+        } elseif ($this->articleRepository->isUserOwner(request('id')) === false) {
+            die('Nie jesteś właścicielem tego artykułu');
+        }
+
+        $validator = validator()->make(request()->all(), $this->updateRules(), $this->messages());
+
+        if ($validator->fails()) {
+            $errors = $validator->errors();
+
+            return view('articles.edit')->with(['article' => $article, 'errors' => $errors]);
+        } else {
+            $this->articleRepository->updateArticle(
+                request('id'),
+                !is_null(request('file'))
+                    ? $this->saveThumbnail()
+                    : $article->img);
+
+            return redirect()->route('home');
+        }
+    }
+
+    public function destroy($id)
+    {
+        !is_null($this->articleRepository->getArticleById($id))
+            ? $this->articleRepository->deleteArticle($id)
+            : die('Nie ma takiego artykułu');
+
+        if ($this->articleRepository->isUserOwner($id) === false) {
+            die('Nie jesteś właścicielem tego artykułu');
+        }
+
 
         return redirect()->route('home');
     }
 
     public function saveThumbnail(): string
     {
-        $fileName = $fileName = rand(100, 9999). "." . request('file')->getClientOriginalExtension();
-        request('file')->storeAs("thumbs", $fileName, 'img');
+        $fileName = $fileName = rand(100, 9999) . "." . request('img')->getClientOriginalExtension();
+        request('img')->storeAs("thumbs", $fileName, 'img');
 
         return $fileName;
+    }
+
+    public function updateRules(): array
+    {
+        return $rules = [
+            'title' => 'required|string|min:10',
+            'content' => 'required|string|min:10',
+            'img' => 'nullable|mimetypes:image/gif,image/jpg,image/jpeg,image/png',
+        ];
     }
 
     public function rules(): array
@@ -71,7 +112,7 @@ class ArticleController extends Controller
         return $rules = [
             'title' => 'required|string|min:10',
             'content' => 'required|string|min:10',
-            'img' => 'nullable|mimetypes:image/gif,image/jpg,image/jpeg,image/png',
+            'img' => 'required|mimetypes:image/gif,image/jpg,image/jpeg,image/png',
         ];
     }
 
