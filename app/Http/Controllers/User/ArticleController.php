@@ -82,7 +82,7 @@ class ArticleController extends Controller
             ? $this->articleRepository->deleteArticle($id)
             : die('Nie ma takiego artykułu');
 
-        if ($this->articleRepository->isUserOwner($id) === false) {
+        if ($this->articleRepository->isUserOwner($id) === true) {
             die('Nie jesteś właścicielem tego artykułu');
         }
 

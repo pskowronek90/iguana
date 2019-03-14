@@ -5,7 +5,8 @@
                 <img class="card-img-top" src="{{ asset("img/thumbs/$article->img") }}" alt="Card image cap">
                 <div class="card-body">
                     <h5 class="card-title">{{ $article->title }}</h5>
-                    <a href="#" class="btn btn-primary">@lang('Czytaj/Skomentuj')</a><br>
+                    <p>{{ $article->content }}</p>
+                    <a href="{{ route('comments.index', ['id' => $article->id]) }}" class="btn btn-primary">@lang('Komentarze')</a><br>
                     @if(auth()->user()->id === $article->user_id)
                         <a href="{{ route('article.edit', ['article' => $article]) }}" class="btn btn-warning">Edytuj</a><br>
                         <form method="post" action="{{ route('article.destroy', ['id' => $article->id]) }}">

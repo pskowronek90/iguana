@@ -10,4 +10,15 @@ class CommentRepository
     {
         $this->comment = $comment;
     }
+
+    public function addNewComment(int $articleId): Comment
+    {
+        return $this->comment->create(
+            [
+                'article_id' => $articleId,
+                'user_id' => auth()->user()->id,
+                'content' => request('content'),
+            ]
+        );
+    }
 }

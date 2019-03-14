@@ -23,7 +23,7 @@
                                 <label for="img">@lang('Zdjęcie')</label>
                                 <input type="file" class="form-control-file" id="img" name="img">
                             </div>
-                            <button type="submit" class="btn btn-primary">Utwórz</button>
+                            <button type="submit" class="btn btn-primary">@lang('Utwórz')</button>
                         </form>
                     </div>
                 </div>
